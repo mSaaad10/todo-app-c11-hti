@@ -1,7 +1,21 @@
+import 'package:daily_tasks_app/database_manager/model/task.dart';
+import 'package:daily_tasks_app/database_manager/tasks_dao.dart';
+import 'package:daily_tasks_app/providers/authentication_provider.dart';
+import 'package:daily_tasks_app/utils/dialog_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:provider/provider.dart';
 
-class TaskItem extends StatelessWidget {
+class TaskItem extends StatefulWidget {
+  Task task;
+
+  TaskItem({required this.task});
+
+  @override
+  State<TaskItem> createState() => _TaskItemState();
+}
+
+class _TaskItemState extends State<TaskItem> {
   @override
   Widget build(BuildContext context) {
     return Slidable(
@@ -13,7 +27,7 @@ class TaskItem extends StatelessWidget {
               flex: 1,
               autoClose: true,
               onPressed: (context) {
-                print('Hello');
+                removeTask(widget.task);
               },
               backgroundColor: Color(0xFFFE4A49),
               foregroundColor: Colors.white,
@@ -61,8 +75,8 @@ class TaskItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Task Title'),
-                  Text('Task Description'),
+                  Text(widget.task.title ?? ''),
+                  Text(widget.task.description ?? ''),
                 ],
               ),
             ),
@@ -82,5 +96,29 @@ class TaskItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void removeTask(Task task) {
+    DialogUtils.showMessage(context, 'Are u Sure u want to delete this task?',
+        posActionTitle: 'Confirm', negActionTitle: 'No', posAction: () {
+      deleteTask(task);
+    });
+  }
+
+  void deleteTask(Task task) async {
+    var authProvider =
+        Provider.of<AuthenticationProvider>(context, listen: false);
+    // delete Task From db
+    DialogUtils.showLoadingDialog(context, 'Deleting task..');
+    await TasksDao.deleteTaskFromDatabase(
+        authProvider.databaseUser!.id!, task.id!);
+
+    DialogUtils.hideDialog(context);
+    DialogUtils.showMessage(context, 'Task Deleted Successfully',
+        posActionTitle: 'Ok',
+        posAction: () {},
+        negActionTitle: 'Undo', negAction: () {
+      // undo logic
+    });
   }
 }

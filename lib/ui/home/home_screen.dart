@@ -13,12 +13,13 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int selectedIndex = 0;
+  String appBarTitle = 'Tasks list';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.app_name),
+        title: Text(appBarTitle),
       ),
       floatingActionButton: FloatingActionButton(
         shape: StadiumBorder(side: BorderSide(color: Colors.white, width: 4)),
@@ -37,9 +38,12 @@ floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
           currentIndex: selectedIndex,
           onTap: (index) {
             selectedIndex = index;
-            setState(() {
-
-            });
+            if (index == 0) {
+              appBarTitle = 'Tasks Tab';
+            } else {
+              appBarTitle = 'Setting Tab';
+            }
+            setState(() {});
           },
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.list, ), label: AppLocalizations.of(context)!.tasks_list_tab),

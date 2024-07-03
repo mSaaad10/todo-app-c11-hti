@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daily_tasks_app/database_manager/model/task.dart';
 import 'package:daily_tasks_app/database_manager/tasks_dao.dart';
 import 'package:daily_tasks_app/providers/authentication_provider.dart';
-import 'package:daily_tasks_app/ui/components/custom_button.dart';
 import 'package:daily_tasks_app/ui/components/custom_text_form-field.dart';
 import 'package:daily_tasks_app/utils/dialog_utils.dart';
 import 'package:flutter/material.dart';
@@ -106,8 +105,8 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
     Task task = Task(
       title: titleController.text,
       description: descriptionController.text,
-      dateTime: Timestamp.fromMillisecondsSinceEpoch(finalSelectedDate!.millisecondsSinceEpoch),
-    );
+      dateTime: Timestamp.fromMillisecondsSinceEpoch(
+            finalSelectedDate!.millisecondsSinceEpoch));
    try{
      DialogUtils.showLoadingDialog(context, 'Loading...');
      await  TasksDao.addTask(task, authProvider.databaseUser!.id!);
